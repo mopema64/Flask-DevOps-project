@@ -3,12 +3,12 @@ import os
 
 app = Flask(__name__)
 
-@app.route('/')
+@app.route("/")
 def hello():
-    return '<h1>Hello World desde Python en Azure Kubernetes Service!</h1>'
+    # Aquí está la salida personalizada con tu nombre
+    return "Hola Miguel Angel, ¡bienvenido al mundo de Python en Azure Kubernetes Service!"
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     # Obtener el puerto de la variable de entorno, o usar 5000 por defecto
-    port = int(os.environ.get('PORT', 5000))
+    port = int(os.environ.get('PORT', '5000'))
     app.run(debug=True, host='0.0.0.0', port=port)
-# cambio pequeño para activar la pipeline
