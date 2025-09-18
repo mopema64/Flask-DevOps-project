@@ -1,6 +1,5 @@
 name: CI/CD Pipeline para Flask App
 
-# El trigger "on: push" asegura que la pipeline se active automáticamente cada vez que subas cambios
 on:
   push:
     branches:
@@ -9,7 +8,6 @@ on:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout del repositorio
         uses: actions/checkout@v4
@@ -27,12 +25,21 @@ jobs:
           push: true
           tags: donmiguel64/flask-devops-image2:latest
 
-      - name: Configurar kubectl
-        run: |
-          mkdir -p ~/.kube
-          echo "${{ secrets.KUBE_CONFIG }}" > ~/.kube/config
-      
+      # --- Autenticación con Azure y conexión a AKS ---
+      - name: Iniciar sesión en Azure
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Configurar contexto de Kubernetes para AKS
+        uses: azure/aks-set-context@v3
+        with:
+          resource-group: 'rg-tutor-project02'
+          cluster-name: 'cluster-prueba-02'
+
+      # --- Desplegar en Kubernetes ---
       - name: Desplegar en Kubernetes
         run: |
           kubectl apply -f k8s-deployment.yaml
+          kubectl apply -f k8s-service.yaml
           kubectl apply -f k8s-service.yaml
